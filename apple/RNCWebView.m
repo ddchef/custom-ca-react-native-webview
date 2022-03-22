@@ -943,16 +943,12 @@ NSString *const CUSTOM_SELECTOR = @"_CUSTOM_SELECTOR_";
   didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
                   completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable))completionHandler
 {
-    NSString* host = nil;
-    if (webView.URL != nil) {
-        host = webView.URL.host;
-    }
     if ([[challenge protectionSpace] authenticationMethod] == NSURLAuthenticationMethodClientCertificate) {
         completionHandler(NSURLSessionAuthChallengeUseCredential, clientAuthenticationCredential);
         return;
     }
-    if ([[challenge protectionSpace] serverTrust] != nil && customCertificatesForHost != nil && host != nil) {
-        SecCertificateRef localCertificate = (__bridge SecCertificateRef)([customCertificatesForHost objectForKey:host]);
+    if ([[challenge protectionSpace] serverTrust] != nil && customCertificatesForHost != nil) {
+        SecCertificateRef localCertificate = (__bridge SecCertificateRef)([customCertificatesForHost objectForKey:@"customCertificate"]);
         if (localCertificate != nil) {
             NSData *localCertificateData = (NSData*) CFBridgingRelease(SecCertificateCopyData(localCertificate));
             SecTrustRef trust = [[challenge protectionSpace] serverTrust];
